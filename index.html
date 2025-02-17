@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Chatbot</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to the CSS file -->
+</head>
+<body>
+    <h1>YAPAY ZEKA PROJESİ</h1>
+    <div id="chatbox">
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="Bir mesaj yaz...">
+        <button onclick="sendMessage()">İLET</button>
+    </div>
+    
+    <script>
+        document.getElementById("userInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") { // Pressing Enter sends the message
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            let inputField = document.getElementById("userInput");
+            let message = inputField.value.trim();
+            if (!message) return;
+
+            let messagesDiv = document.getElementById("messages");
+            messagesDiv.innerHTML += `<p class="message user"><strong>Siz:</strong> ${message}</p>`;
+            inputField.value = "";
+
+            try {
+                let response = await fetch("http://127.0.0.1:5000/chat", {  
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                let data = await response.json();
+                
+                if (data.error) {
+                    messagesDiv.innerHTML += `<p class="message bot"><strong>Error:</strong> ${data.error}</p>`;
+                } else {
+                    messagesDiv.innerHTML += `<p class="message bot"><strong>Yapay zeka:</strong> ${data.response}</p>`;
+                }
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                console.error("Fetch error:", error);
+                messagesDiv.innerHTML += `<p class="message bot"><strong>Error:</strong> Failed to connect to the server.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
