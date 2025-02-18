@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Import CORS to fix cross-origin issues
 import google.generativeai as genai
+from langdetect import detect  # Language detection library
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -26,7 +27,14 @@ def chat():
         if not user_input:
             return jsonify({"error": "Message cannot be empty"}), 400
 
+        # Detect the language of the user's input
+        language = detect(user_input)
+
+        # Get the response from Gemini
         response = get_gemini_response(user_input)
+
+        # Add the detected language to the response
+        response["language"] = language
 
         return jsonify(response)
     except Exception as e:
