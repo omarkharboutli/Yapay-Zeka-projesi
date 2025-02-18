@@ -10,17 +10,40 @@
     <h1>YAPAY ZEKA PROJESİ</h1>
     <div id="chatbox">
         <div id="messages"></div>
-        <input type="text" id="userInput" placeholder="Bir mesaj yaz...">
-        <button onclick="sendMessage()">İLET</button>
+        <input type="text" id="userInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">İlet</button>
+        <button onclick="startVoiceCommand()">Sesli Komut</button>
     </div>
     
     <script>
+        const synth = window.speechSynthesis;
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US'; // Default language, will be dynamically updated
+
         document.getElementById("userInput").addEventListener("keypress", function(event) {
             if (event.key === "Enter") { // Pressing Enter sends the message
                 event.preventDefault();
                 sendMessage();
             }
         });
+
+        function startVoiceCommand() {
+            recognition.start();
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById("userInput").value = transcript;
+                sendMessage();
+            };
+            recognition.onerror = function(event) {
+                console.error("Voice recognition error:", event.error);
+            };
+        }
+
+        function speak(text, lang) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang; // Set language dynamically
+            synth.speak(utterance);
+        }
 
         async function sendMessage() {
             let inputField = document.getElementById("userInput");
@@ -32,7 +55,7 @@
             inputField.value = "";
 
             try {
-                let response = await fetch("https://yapay-zeka-projesi.onrender.com//chat", {  
+                let response = await fetch("https://yapay-zeka-projesi.onrender.com/chat", {  
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ message: message })
@@ -47,7 +70,8 @@
                 if (data.error) {
                     messagesDiv.innerHTML += `<p class="message bot"><strong>Error:</strong> ${data.error}</p>`;
                 } else {
-                    messagesDiv.innerHTML += `<p class="message bot"><strong>Yapay zeka:</strong> ${data.response}</p>`;
+                    messagesDiv.innerHTML += `<p class="message bot"><strong>Yapay Zeka:</strong> ${data.response}</p>`;
+                    speak(data.response, data.language); // Speak the bot's response in the detected language
                 }
 
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
