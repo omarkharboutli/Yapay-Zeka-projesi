@@ -68,20 +68,55 @@ h1 {
     border-radius: 5px;
     width: calc(100% - 22px);
     outline: none;
+    margin-bottom: 10px;
 }
 
-/* Button */
+/* Buttons */
 button {
-    background: #28a745;
     color: white;
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-button:hover {
+/* Send Button */
+button:nth-of-type(1) {
+    background: #28a745;
+}
+
+button:nth-of-type(1):hover {
     background: #218838;
+}
+
+/* Voice Command Button */
+button:nth-of-type(2) {
+    background: #ffc107;
+}
+
+button:nth-of-type(2):hover {
+    background: #e0a800;
+}
+
+/* Scrollbar styling for messages */
+#messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+#messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#messages::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#messages::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
