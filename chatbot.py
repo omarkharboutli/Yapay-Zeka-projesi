@@ -30,11 +30,26 @@ def chat():
         # Detect the language of the user's input
         language = detect(user_input)
 
+        # Map detected language to a valid speech synthesis language code
+        language_codes = {
+            "en": "en-US",  # English
+            "tr": "tr-TR",  # Turkish
+            "es": "es-ES",  # Spanish
+            "fr": "fr-FR",  # French
+            "de": "de-DE",  # German
+            "zh": "zh-CN",  # Chinese
+            "ja": "ja-JP",  # Japanese
+            "ar": "ar-SA",  # Arabic (Saudi Arabia)
+            # Add more languages as needed
+        }
+        # Use the primary language code from langdetect and default to English if not supported
+        language_code = language_codes.get(language.split("-")[0], "en-US")
+
         # Get the response from Gemini
         response = get_gemini_response(user_input)
 
-        # Add the detected language to the response
-        response["language"] = language
+        # Add the detected language code to the response
+        response["language"] = language_code
 
         return jsonify(response)
     except Exception as e:
