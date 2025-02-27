@@ -3,4 +3,4 @@ flask-cors
 google-generativeai
 gunicorn
 langdetect
-pip install --upgrade google-generativeai
+--upgrade google-generativeai
